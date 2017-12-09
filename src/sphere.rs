@@ -1,7 +1,7 @@
 use ray::{Ray, Hittable, Hit};
 use vect3::Vect3;
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Sphere {
     pub center: Vect3,
     pub radius: f64,

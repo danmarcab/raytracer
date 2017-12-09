@@ -1,7 +1,7 @@
 use ray::{Ray, Hittable, Hit};
 use vect3::Vect3;
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Plane {
     pub point: Vect3,
     pub normal: Vect3,

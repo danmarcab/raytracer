@@ -3,6 +3,7 @@ use vect3::Vect3;
 use ray::{Ray, Hittable};
 use scene::Scene;
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Camera {
     pub sensor_width: u32,
     pub sensor_height: u32,

@@ -3,12 +3,13 @@ use vect3::Vect3;
 use sphere::Sphere;
 use plane::Plane;
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Scene {
     pub background_color: Vect3,
     pub objects: Vec<Object>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Object {
     Sphere(Sphere),
     Plane(Plane)
