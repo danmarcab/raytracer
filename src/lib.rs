@@ -5,6 +5,7 @@ pub mod ray;
 pub mod camera;
 pub mod scene;
 pub mod sphere;
+pub mod plane;
 
 use image::DynamicImage;
 use camera::Camera;

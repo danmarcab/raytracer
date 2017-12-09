@@ -5,6 +5,7 @@ use image::ImageFormat;
 use std::fs::OpenOptions;
 use raytracer::vect3::Vect3;
 use raytracer::sphere::Sphere;
+use raytracer::plane::Plane;
 use raytracer::camera::Camera;
 use raytracer::scene::{Scene, Object};
 
@@ -17,11 +18,27 @@ fn main() {
 
     let scene = Scene {
         background_color: Vect3 {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
+            x: 80.0,
+            y: 80.0,
+            z: 180.0,
         },
         objects: [
+            Object::Plane(Plane {
+                point: Vect3 {
+                    x: 0.0,
+                    y: -3.0,
+                    z: 0.0,
+                },
+                normal: Vect3 {
+                    x: 0.0,
+                    y: 1.0,
+                    z: 0.0,
+                },
+                surface_color: Vect3 {
+                    x: 135.0,
+                    y: 100.0,
+                    z: 135.0, }
+            }),
             Object::Sphere(Sphere {
                 center: Vect3 {
                     x: 3.0,
