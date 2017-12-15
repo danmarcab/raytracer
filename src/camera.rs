@@ -23,7 +23,11 @@ impl Camera {
                 let ray = self.trace_ray(x, y);
 
                 match scene.hit(&ray) {
-                    Some(hit) => image.put_pixel(x, y, to_rgba(&hit.surface_color)),
+                    Some(hit) => {
+                        let color = scene.iluminate_hit(&hit);
+
+                        image.put_pixel(x, y, to_rgba(&color))
+                    }
                     None => image.put_pixel(x, y, to_rgba(&scene.background_color)),
                 }
             }

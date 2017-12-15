@@ -7,6 +7,8 @@ pub struct Ray {
 
 pub struct Hit {
     pub surface_color: Vect3,
+    pub position: Vect3,
+    pub normal: Vect3,
     pub distance_to_orig: f64,
 }
 

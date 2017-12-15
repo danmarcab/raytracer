@@ -19,14 +19,14 @@ impl Hittable for Plane {
             if dist > 0.0 {
                 Some(Hit {
                     surface_color: self.surface_color,
+                    position: ray.direction * dist,
+                    normal: self.normal.normalize(),
                     distance_to_orig: dist,
                 })
-            }
-            else {
+            } else {
                 None
             }
-        }
-        else {
+        } else {
             None
         }
     }

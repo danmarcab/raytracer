@@ -21,11 +21,15 @@ impl Hittable for Sphere {
         let radius_sq = self.radius * self.radius;
 
         if proj_to_center_dist_sq < radius_sq {
-            let proj_to_hit_dist =  (radius_sq - proj_to_center_dist_sq).sqrt();
+            let proj_to_hit_dist = (radius_sq - proj_to_center_dist_sq).sqrt();
             let distance_to_orig = orig_proj_dist - proj_to_hit_dist;
+            let hit_point = ray.direction * distance_to_orig;
+            let normal = hit_point - self.center;
 
             Some(Hit {
                 surface_color: self.surface_color,
+                position: hit_point,
+                normal: normal.normalize(),
                 distance_to_orig: distance_to_orig,
             })
         } else {
