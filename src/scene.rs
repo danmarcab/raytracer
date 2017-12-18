@@ -23,14 +23,13 @@ impl Scene {
             };
 
             match self.hit(&ray_to_light) {
-                Some(_h) => {}
+                Some(light_hit) => {
+                    if light_hit.distance_to_orig > light.distance_from(&hit.position) {
+                        color = color + light_contribution(&light, &hit, &direction_to_light);
+                    }
+                }
                 None => {
-                    let light_intensity = light.intensity();
-                    let light_power = hit.normal.dot(&direction_to_light).max(0.0) *
-                        light_intensity;
-                    let light_reflected = 0.5 / std::f64::consts::PI;
-                    let light_color = light.color() * light_power * light_reflected;
-                    color = color + (hit.surface_color * light_color);
+                    color = color + light_contribution(&light, &hit, &direction_to_light);
                 }
             }
 
@@ -43,6 +42,16 @@ impl Scene {
     }
 }
 
+fn light_contribution(light: &Light, hit: &Hit, direction_to_light: &Vect3) -> Vect3 {
+    let light_intensity = light.intensity(&hit.position);
+    let light_power = hit.normal.dot(&direction_to_light).max(0.0) * light_intensity;
+    let light_reflected = 0.5 / std::f64::consts::PI;
+    let light_color = light.color() * light_power * light_reflected;
+
+    hit.surface_color * light_color
+}
+
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Object {
     Sphere(Sphere),
@@ -52,24 +61,39 @@ pub enum Object {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Light {
     Directional(DirectionalLight),
+    Point(PointLight),
 }
 
 impl Light {
-    pub fn direction_from(&self, _from: &Vect3) -> Vect3 {
+    pub fn direction_from(&self, from: &Vect3) -> Vect3 {
         match self {
             &Light::Directional(ref light) => -light.direction.normalize(),
+            &Light::Point(ref light) => (light.position - *from).normalize(),
         }
     }
 
-    pub fn intensity(&self) -> f64 {
+    pub fn distance_from(&self, from: &Vect3) -> f64 {
+        match self {
+            &Light::Directional(ref _light) => ::std::f64::INFINITY,
+            &Light::Point(ref light) => (light.position - *from).length(),
+        }
+    }
+
+    pub fn intensity(&self, from: &Vect3) -> f64 {
         match self {
             &Light::Directional(ref light) => light.intensity,
+            &Light::Point(ref light) => {
+                let dist_sq = (light.position - *from).length_sq() as f64;
+                light.intensity / (4.0 * ::std::f64::consts::PI * dist_sq)
+
+            }
         }
     }
 
     pub fn color(&self) -> Vect3 {
         match self {
             &Light::Directional(ref light) => light.color,
+            &Light::Point(ref light) => light.color,
         }
     }
 }
@@ -77,6 +101,13 @@ impl Light {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DirectionalLight {
     pub direction: Vect3,
+    pub color: Vect3,
+    pub intensity: f64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PointLight {
+    pub position: Vect3,
     pub color: Vect3,
     pub intensity: f64,
 }
