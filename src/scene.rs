@@ -17,11 +17,23 @@ impl Scene {
         for light in &self.lights {
             let direction_to_light = light.direction_from(&hit.position);
 
-            let light_intensity = light.intensity();
-            let light_power = hit.normal.dot(&direction_to_light).max(0.0) * light_intensity;
-            let light_reflected = 0.5 / std::f64::consts::PI;
-            let light_color = light.color() * light_power * light_reflected;
-            color = color + (hit.surface_color * light_color);
+            let ray_to_light = Ray {
+                origin: (*hit).position + 0.001 * (*hit).normal,
+                direction: direction_to_light,
+            };
+
+            match self.hit(&ray_to_light) {
+                Some(_h) => {}
+                None => {
+                    let light_intensity = light.intensity();
+                    let light_power = hit.normal.dot(&direction_to_light).max(0.0) *
+                        light_intensity;
+                    let light_reflected = 0.5 / std::f64::consts::PI;
+                    let light_color = light.color() * light_power * light_reflected;
+                    color = color + (hit.surface_color * light_color);
+                }
+            }
+
         }
         Vect3 {
             x: color.x.max(0.0).min(255.0),
@@ -45,7 +57,7 @@ pub enum Light {
 impl Light {
     pub fn direction_from(&self, _from: &Vect3) -> Vect3 {
         match self {
-            &Light::Directional(ref light) => -light.direction,
+            &Light::Directional(ref light) => -light.direction.normalize(),
         }
     }
 

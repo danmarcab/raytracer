@@ -13,6 +13,11 @@ impl Hittable for Sphere {
         let orig_to_center: Vect3 = self.center - ray.origin;
 
         let orig_proj_dist = orig_to_center.dot(&ray.direction);
+
+        if orig_proj_dist < 0.0 {
+            return None;
+        }
+
         let proj = ray.origin + orig_proj_dist * ray.direction;
 
         let center_to_proj: Vect3 = proj - self.center;
